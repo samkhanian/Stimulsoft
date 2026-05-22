@@ -344,7 +344,7 @@ Stimul AI یک Design Assistant تخصصی است، نه معمار نرم‌ا�
 
 ---
 
-## ۷. توصیه نهایی معماری
+## ۷. توصیه نهایی معماری + بهبود‌های فنی
 
 <div align="center">
 
@@ -368,16 +368,84 @@ Stimul AI یک Design Assistant تخصصی است، نه معمار نرم‌ا�
 
 ---
 
-### 🧱 ساختار پیشنهادی
+### 🧱 ساختار پیشنهادی (با بهبود‌های فنی)
 
-| # | جزء |
-|:---:|:---|
-| ۱ | 📄 Neutral MRT Templates (فقط Layout) |
-| ۲ | 🎨 ReportThemeManager (موتور مرکزی استایل) |
-| ۳ | 🗄️ Theme Store (JSON + DB Versioning) |
-| ۴ | 💉 Runtime Style Injection |
-| ۵ | 🧩 Component-based Rendering |
-| ۶ | ⏳ Historical Snapshot Support |
+| # | جزء | بهبود‌ها |
+|:---:|:---|:---|
+| ۱ | 📄 Neutral MRT Templates | فقط Layout بدون Styling |
+| ۲ | 🎨 ReportThemeManager | ✅ Caching + Async + Error Handling |
+| ۳ | 🗄️ Theme Store | ✅ Audit Trail + Historical Support |
+| ۴ | 💉 Runtime Style Injection | ✅ Tenant Isolation + Multi-level Overrides |
+| ۵ | 🧩 Component-based Rendering | ✅ Factory Pattern + Component Registry |
+| ۶ | ⏳ Historical Snapshot Support | ✅ Version Control + Rollback |
+
+---
+
+### 🔑 بهبود‌های کلیدی پیشنهادی
+
+#### ۱. Theme Engine بهبود‌یافته
+- **Caching Strategy** - بهبود ۲۰-۳۰% Performance
+- **Async/Await** - عملیات ناهم‌زمان
+- **Error Handling** - مدیریت Exception‌ها
+- **Logging** - پیگیری تمام عملیات
+
+#### ۲. Database Schema بهتر
+- **Audit Trail** - ثبت تمام تغییرات
+- **Version Control** - Rollback به نسخه‌های قبلی
+- **Tenant Isolation** - برای Multi-tenant systems
+- **Historical Accuracy** - دقت در بازتولید
+
+#### ۳. Multi-tenant Support
+- **Tenant Context** - ایزوله‌سازی داده‌های Tenant
+- **Row-level Security** - سطح DB
+- **Tenant Branding** - Theme مختص هر Tenant
+- **Resource Quotas** - محدودیت منابع
+
+#### ۴. Testing Strategy
+- **Unit Tests** - برای Theme Engine
+- **Integration Tests** - برای Database Operations
+- **Snapshot Tests** - برای Historical Rendering
+- **Performance Tests** - برای Caching
+
+#### ۵. Performance Optimization
+- **Lazy Loading** - برای MRT بزرگ
+- **Query Optimization** - برای Historical Queries
+- **Compression** - برای Theme Data
+- **Connection Pooling** - برای Database
+
+---
+
+### 📋 Priority Roadmap برای پیاده‌سازی
+
+| اولویت | کار | بازه زمانی |
+|:---:|:---|:---|
+| 🔴 **بالا** | Database Schema + Stored Procedures | ۱ هفته |
+| 🔴 **بالا** | Theme Manager + Caching | ۲ هفته |
+| 🔴 **بالا** | Neutral MRT Templates | ۲ هفته |
+| 🟠 **متوسط** | Audit Trail Implementation | ۱ هفته |
+| 🟠 **متوسط** | Unit Tests | ۲ هفته |
+| 🟠 **متوسط** | Multi-tenant Support | ۲ هفته |
+| 🟡 **کم** | Performance Tuning | ۱ هفته |
+| 🟡 **کم** | Documentation | ۱ هفته |
+
+---
+
+### 💡 اصول طراحی Hybrid
+
+| اصل | توضیح |
+|:---|:---|
+| **Single Source of Truth** | فقط یک جایی برای هر تصمیم |
+| **Separation of Concerns** | هر لایه مسئولیت خاص |
+| **Versioning Everything** | تمام تغییرات قابل ردیابی |
+| **Audit & Compliance** | تمام عملیات ثبت‌شده |
+| **Performance First** | Caching و Optimization |
+| **Testability** | تمام کدها قابل تست |
+
+---
+
+<div align="center">
+
+### اگر پروژه شما:
 
 ---
 
@@ -399,92 +467,104 @@ Stimul AI یک Design Assistant تخصصی است، نه معمار نرم‌ا�
 
 ---
 
-## ۹. پیوست: نمونه کدهای مرجع برای معماری هیبریدی
+## ۹. پیوست: نمونه کدهای مرجع و عملی
 
-### ۹.۱. نمونه کلاس ReportThemeManager
+> 📂 **تمام نمونه‌های کامل در پوشه [`examples/`](./examples) موجود هستند.**
 
+### ۹.۱. نمونه کلاس ReportThemeManager (بهبود‌یافته)
+
+**📄 فایل کامل:** [`examples/csharp/ReportThemeManager.cs`](./examples/csharp/ReportThemeManager.cs)
+
+**ویژگی‌های کلیدی:**
+- ✅ **Caching Strategy** - بهبود Performance
+- ✅ **Async/Await** - عملیات ناهم‌زمان
+- ✅ **Error Handling** - مدیریت استثناها جامع
+- ✅ **Logging** - پیگیری عملیات
+
+**نمونه استفاده:**
 ```csharp
-public class ReportThemeManager
+var themeManager = new ReportThemeManager(dbContext, cache, logger);
+
+// دریافت تم کاربر
+var theme = await themeManager.GetEffectiveThemeAsync(
+    userId: 123,
+    historicalDate: new DateTime(2025, 1, 15)
+);
+
+// پاک کردن Cache برای Refresh
+themeManager.InvalidateCache(userId: 123);
+```
+
+### ۹.۲. نمونه MRT خنثی (Neutral Template)
+
+**📄 فایل کامل:** [`examples/xml/neutral_invoice.mrt`](./examples/xml/neutral_invoice.mrt)
+
+**ویژگی‌های کلیدی:**
+- ✅ فقط Layout بدون Styling
+- ✅ Placeholder‌ها برای Runtime Injection
+- ✅ پشتیبانی RTL
+- ✅ Data Binding آماده
+
+**نکته مهم:**
+```xml
+<!-- Template فقط Layout را تعریف می‌کند -->
+<!-- تمام رنگ‌ها، فونت‌ها و Branding در Runtime اعمال می‌شود -->
+<TextObject Name="CompanyNamePlaceholder">
+  <Text>{{COMPANY_NAME}}</Text>
+</TextObject>
+```
+
+### ۹.۳. طراحی پایگاه داده
+
+**📄 فایل کامل:** [`examples/sql/ThemeDatabase.sql`](./examples/sql/ThemeDatabase.sql)
+
+**جداول اصلی:**
+- `ThemeVersions` - نسخه‌های تم
+- `UserThemeOverrides` - Override‌های کاربر
+- `ThemeAuditLog` - ثبت تغییرات
+- `TenantThemes` - تم‌های Multi-tenant
+- `ReportTemplateBindings` - ربط MRT و Themes
+
+**Stored Procedures:**
+```sql
+-- دریافت تم موثر
+EXEC sp_GetEffectiveTheme @UserId = 123, @HistoricalDate = '2025-01-15';
+
+-- ایجاد نسخه جدید
+EXEC sp_CreateThemeVersion 
+    @VersionName = 'Blue-v2.1',
+    @ThemeData = N'{...}',
+    @CreatedBy = 'admin';
+```
+
+### ۹.۴. تم JSON جامع
+
+**📄 فایل کامل:** [`examples/json/corporate-blue-v2.json`](./examples/json/corporate-blue-v2.json)
+
+**بخش‌های اصلی:**
+- 🎨 **Colors** - تمام رنگ‌های Theme
+- 🔤 **Fonts** - Family، Size، Weight
+- 🏢 **Branding** - لوگو و اطلاعات شرکت
+- 📏 **Spacing** - Padding، Margin
+- 📊 **Tables** - استایل جداول
+- 📄 **Headers/Footers** - استایل صفحات
+- 🌐 **RTL & Localization** - پشتیبانی راست‌به‌چپ
+
+**نمونه ساختار:**
+```json
 {
-    private readonly string _baseThemePath = "Themes/base_theme.json";
-    private readonly ApplicationDbContext _db;
-
-    public ReportThemeManager(ApplicationDbContext db)
-    {
-        _db = db;
-    }
-
-    public ReportTheme GetEffectiveTheme(int? userId = null, DateTime? historicalDate = null)
-    {
-        // ۱. لود تم پایه از JSON
-        var theme = JsonConvert.DeserializeObject<ReportTheme>(
-            File.ReadAllText(_baseThemePath));
-
-        // ۲. اعمال اوررایدهای کاربر
-        if (userId.HasValue)
-        {
-            var userOverrides = _db.UserThemeOverrides
-                .FirstOrDefault(u => u.UserId == userId.Value);
-            if (userOverrides != null)
-                theme.ApplyOverrides(userOverrides);
-        }
-
-        // ۳. بازتولید تاریخی
-        if (historicalDate.HasValue)
-        {
-            var historicalTheme = _db.ThemeVersions
-                .Where(t => t.ValidFrom <= historicalDate.Value)
-                .OrderByDescending(t => t.ValidFrom)
-                .FirstOrDefault();
-            if (historicalTheme != null)
-                theme = historicalTheme.ThemeData;
-        }
-
-        return theme;
-    }
+  "themeName": "Corporate-Blue-v2.0",
+  "colors": {
+    "primary": "#007ACC",
+    "text": { "primary": "#212121" }
+  },
+  "fonts": {
+    "body": { "family": "Segoe UI", "size": 11 }
+  }
 }
 ```
 
-### ۹.۲. نمونه Neutral MRT Template (فایل خنثی)
-
-```xml
-<!-- neutral_invoice.mrt (نمونه مفهومی) -->
-<Report>
-  <ReportPage>
-    <PageHeaderBand Name="HeaderBand">
-      <!-- این باند در runtime با لوگو و سربرگ از Theme Engine پر می‌شود -->
-    </PageHeaderBand>
-    <DataBand Name="ItemsBand">
-      <!-- ستون‌ها و فیلدها، اما بدون رنگ و فونت -->
-    </DataBand>
-    <PageFooterBand Name="FooterBand">
-      <!-- فوتر داینامیک -->
-    </PageFooterBand>
-  </ReportPage>
-</Report>
-```
-
-### ۹.۳. جدول دیتابیس پیشنهادی
-
-```sql
-CREATE TABLE ThemeVersions (
-    Id INT PRIMARY KEY IDENTITY,
-    VersionName NVARCHAR(100),
-    ValidFrom DATETIME NOT NULL,
-    ThemeData NVARCHAR(MAX), -- JSON کامل تم
-    CreatedBy NVARCHAR(100),
-    CreatedAt DATETIME DEFAULT GETDATE()
-);
-
-CREATE TABLE UserThemeOverrides (
-    Id INT PRIMARY KEY IDENTITY,
-    UserId INT NOT NULL,
-    OverrideData NVARCHAR(MAX), -- JSON شامل فقط فیلدهای تغییر یافته
-    FOREIGN KEY (UserId) REFERENCES Users(Id)
-);
-```
-
-### ۹.۴. چک‌لیست تصمیم‌گیری سریع
+### ۹.۵. چک‌لیست تصمیم‌گیری سریع
 
 | سوال | اگر پاسخ "بله" است |
 |:---|:---|
@@ -495,6 +575,16 @@ CREATE TABLE UserThemeOverrides (
 | 🏢 آیا سیستم چندمشترکه (Multi-tenant) است؟ | ⚡ Hybrid |
 | 👨‍💻 آیا تیم شما فقط برنامه‌نویس است؟ | ⚡ Hybrid با MRTهای خنثی |
 | 🤖 آیا می‌خواهید از هوش مصنوعی برای طراحی سریع استفاده کنید؟ | 🧠 Stimul AI + 🎨 MRT |
+
+---
+
+## 📚 راهنمای Quick Start
+
+1. **مطالعه:** [`examples/README.md`](./examples/README.md)
+2. **راه‌اندازی DB:** `examples/sql/ThemeDatabase.sql`
+3. **استفاده از کد:** `examples/csharp/ReportThemeManager.cs`
+4. **طراحی Template:** `examples/xml/neutral_invoice.mrt`
+5. **پیکربندی Theme:** `examples/json/corporate-blue-v2.json`
 
 ---
 
